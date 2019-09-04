@@ -21,7 +21,7 @@ function Import-OnDemandModule
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Position = 0)]
+        [Parameter(Mandatory = $true)]
         [string] $Name,
         [ValidateScript( { Test-Path $_ })]
         [string] $Path = $OnDemandModulePath
@@ -115,7 +115,11 @@ function Set-OnDemandModulePath
     #>
     [CmdletBinding()]
     param (
-        [Parameter(ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
+        [Parameter(
+            ValueFromPipelineByPropertyName=$true, 
+            ValueFromPipeline=$true,
+            Mandatory = $true
+            )]
         [ValidateScript( { Test-Path $_ })]
         [string] $Path
     )
