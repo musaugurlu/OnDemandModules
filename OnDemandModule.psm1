@@ -119,8 +119,8 @@ function Set-OnDemandModulePath
             ValueFromPipelineByPropertyName=$true, 
             ValueFromPipeline=$true,
             Mandatory = $true
-            )]
-        [ValidateScript( { Test-Path $_ })]
+            )]        
+            [ValidateScript( { Test-Path $_ })]
         [string] $Path
     )
     

@@ -12,7 +12,7 @@ There might be a coupe of solutions for this.
 
 ## Installation
 
-You can install OnDemandModule from [Powershell Gallery](https://www.powershellgallery.com/packages/OnDemandModule/1.0.0) by running this command: 
+You can install OnDemandModule from [Powershell Gallery](https://www.powershellgallery.com/packages/OnDemandModule/1.0.1) by running this command: 
 
 `Install-Module OnDemandModule`
 
