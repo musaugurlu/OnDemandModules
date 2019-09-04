@@ -1,7 +1,4 @@
-if (-not($OnDemandModulePath))
-{
-    $Global:OnDemandModulePath = "C:\OnDemandModule"   
-}
+if (!$Global:OnDemandModulePath) { $Global:OnDemandModulePath = "$HOME\OnDemandModules" }
 
 function Import-OnDemandModule
 {
@@ -61,7 +58,7 @@ function Install-OnDemandModule
     
     process
     {
-        Save-Module -Path $OnDemandModulePath -Name $Name
+        Write-Warning "Please use `"Save-Module`" cmdlet with `"-Name $Name -Path `$OnDemandModulePath`" parameters it has more options. For more information, run `"Get-Help Save-Module`""
     }
     
     end
@@ -85,8 +82,30 @@ function Set-OnDemandModulePath
     
     process
     {
-        $ProfilePath = Join-Path -Path (Split-Path -Path $profile -Parent) -ChildPath "Profile.ps1"
+        $PSFolder = Split-Path -Path $profile -Parent
+        $ProfilePath = Join-Path -Path $PSFolder -ChildPath "Profile.ps1"
         $PathVariable = "`$Global:OnDemandModulePath = `'$Path`'"
+
+        if (-not(Test-Path -Path $PSFolder)) {
+            try {
+                New-Item -Path (Split-Path -Path $PSFolder -Parent) -Name (Split-Path -Path $PSFolder -Leaf) -ItemType Directory | Out-Null   
+            }
+            catch {
+                throw "Powershell User ($PSFolder) Folder does not exist!"
+                break
+            }
+        }
+
+        if(-not(Test-Path -Path $ProfilePath))
+        {
+            try {
+                New-Item -Path $PSFolder -Name Profile.ps1 -ItemType File | Out-Null
+            }
+            catch {
+                throw "User Profile file ($PSFolder\Profile.ps1) does not exist!"
+                break
+            }
+        }
 
         if($ProfilePath -and (Get-Content $ProfilePath | Where-Object {$_ -like '*Global:OnDemandModulePath*'})) {
             
