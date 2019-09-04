@@ -27,10 +27,10 @@ Author = 'Musa Ugurlu'
 CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = 'Musa Ugurlu - 2019'
+Copyright = 'Copyright (c) 2019 Musa Ugurlu'
 
 # Description of the functionality provided by this module
-Description = 'Allow you to import modules on demand.'
+Description = 'Allows to import modules on demand seamlessly. Please go to Project URL for more information'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -99,7 +99,7 @@ PrivateData = @{
         Tags = 'import','module','ondemand'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/musaugurlu/OnDemandModules/blob/master/LICENSE'
+        LicenseUri = 'https://raw.githubusercontent.com/musaugurlu/OnDemandModules/master/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/musaugurlu/OnDemandModules'

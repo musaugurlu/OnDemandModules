@@ -2,6 +2,23 @@ if (!$Global:OnDemandModulePath) { $Global:OnDemandModulePath = "$HOME\OnDemandM
 
 function Import-OnDemandModule
 {
+    <#
+        .SYNOPSIS
+        Allows to import modules on demand.
+
+        .DESCRIPTION
+        When you install modules with Install-Module, it saves the modules to one of folder in `$env:PSModulePath. Those modules are imported automatically evrytime powershell is started. OnDemandModule allows you to import modules with their name only without specifying path
+
+        .PARAMETER Name
+        Name of the Module you would like to import
+
+        .PARAMETER Path
+        Path of the module. it is set to `$OnDemandModulePath by default
+
+        .EXAMPLE
+        Import-OnDemandModule -Name VMWare.PowerCLI
+
+    #>
     [CmdletBinding()]
     param (
         [Parameter(Position = 0)]
@@ -46,6 +63,20 @@ function Import-OnDemandModule
 
 function Install-OnDemandModule
 {
+    <#
+        .SYNOPSIS
+        It is a just placeholder. It returs a warning only.
+
+        .DESCRIPTION
+        It is a just placeholder. It returs a warning only.
+
+        .PARAMETER Name
+        Name of the Module you would like to install.
+
+        .EXAMPLE
+        Install-OnDemandModule -Name MSOnline
+
+    #>
     [CmdletBinding()]
     param (
         [Parameter(Position = 0)]
@@ -58,7 +89,7 @@ function Install-OnDemandModule
     
     process
     {
-        Write-Warning "Please use `"Save-Module`" cmdlet with `"-Name $Name -Path `$OnDemandModulePath`" parameters it has more options. For more information, run `"Get-Help Save-Module`""
+        Write-Warning "This cmdlet is just a placeholder. Please use `"Save-Module`" cmdlet with `"-Name $Name -Path `$OnDemandModulePath`" parameters it has more options. For more information, run `"Get-Help Save-Module`""
     }
     
     end
@@ -68,6 +99,20 @@ function Install-OnDemandModule
 
 function Set-OnDemandModulePath
 {
+    <#
+        .SYNOPSIS
+        Sets OnDemandModule path to given path.
+
+        .DESCRIPTION
+        Import-OnDemandModule uses the path defined in `$OnDemandModulePath variable. This cmdlet will add settings to Profile.ps1 with given path. So `$OnDemandModulePath can be set to this path as a part of profile.
+
+        .PARAMETER Path
+        Desired Path for modules to be used with OnDemandModule 
+
+        .EXAMPLE
+        Set-OnDemandModule -Path "C:\Users\Musa\OnDemandModules"
+
+    #>
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
@@ -82,8 +127,9 @@ function Set-OnDemandModulePath
     
     process
     {
-        $PSFolder = Split-Path -Path $profile -Parent
-        $ProfilePath = Join-Path -Path $PSFolder -ChildPath "Profile.ps1"
+        $Path         = Resolve-Path -Path $Path
+        $PSFolder     = Split-Path -Path $profile -Parent
+        $ProfilePath  = Join-Path -Path $PSFolder -ChildPath "Profile.ps1"
         $PathVariable = "`$Global:OnDemandModulePath = `'$Path`'"
 
         if (-not(Test-Path -Path $PSFolder)) {
