@@ -1,5 +1,66 @@
 if (!$Global:OnDemandModulePath) { $Global:OnDemandModulePath = "$HOME\OnDemandModules" }
 
+function Get-OnDemandModule
+{
+    <#
+        .SYNOPSIS
+        Gets Ondemand-imported modules
+
+        .DESCRIPTION
+        Scans imported modules and returns the ones imported OnDemand
+
+        .PARAMETER Name
+        Module Name
+
+        .PARAMETER ListAvailable
+        returns available modules as well as already imported modules
+
+        .EXAMPLE
+        Get-OnDemandModule -Name AzureAD
+
+        .EXAMPLE
+        Get-OnDemandModule -Name ImportExcel -ListAvailable
+
+    #>
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string] $Name,
+        [switch] $ListAvailable
+    )
+    
+    begin
+    {
+        $CurrentPSModulePath = $env:PSModulePath
+        $env:PSModulePath = $env:PSModulePath + ";$OnDemandModulePath"
+    }
+    
+    process
+    {
+        try
+        {
+            if ($ListAvailable)
+            {
+                $Modules = Get-Module "$Name" -ListAvailable | Where-Object { $_.Path -like "$OnDemandModulePath*" }
+            }
+            else
+            {
+                $Modules = Get-Module "$Name" | Where-Object { $_.Path -like "$OnDemandModulePath*" }
+            }
+        }
+        catch
+        {
+            throw "$Name Module couldn't be found in OndemandModulePath $OnDemandModulePath"
+        }
+    }
+    
+    end
+    {
+        $env:PSModulePath = $CurrentPSModulePath
+        $Modules
+    }
+}
+
 function Import-OnDemandModule
 {
     <#
@@ -21,7 +82,7 @@ function Import-OnDemandModule
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [string] $Name,
         [ValidateScript( { Test-Path $_ })]
         [string] $Path = $OnDemandModulePath
@@ -35,9 +96,7 @@ function Import-OnDemandModule
     
     process
     {
-        $Module = Get-Module "$OnDemandModulePath\$Name" -ListAvailable -ErrorAction SilentlyContinue
-
-        if (!$Module)
+        if (-not(Get-OnDemandModule -Name $Name -ListAvailable))
         {
             $env:PSModulePath = $CurrentPSModulePath
             throw "$Name Module could not be found!"
@@ -46,7 +105,7 @@ function Import-OnDemandModule
 
         try
         {
-            Import-Module $Name
+            Import-Module "$OndemandModulePath\$Name"
         }
         catch
         {
@@ -116,11 +175,11 @@ function Set-OnDemandModulePath
     [CmdletBinding()]
     param (
         [Parameter(
-            ValueFromPipelineByPropertyName=$true, 
-            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromPipeline = $true,
             Mandatory = $true
-            )]        
-            [ValidateScript( { Test-Path $_ })]
+        )]        
+        [ValidateScript( { Test-Path $_ })]
         [string] $Path
     )
     
@@ -131,39 +190,47 @@ function Set-OnDemandModulePath
     
     process
     {
-        $Path         = Resolve-Path -Path $Path
-        $PSFolder     = Split-Path -Path $profile -Parent
-        $ProfilePath  = Join-Path -Path $PSFolder -ChildPath "Profile.ps1"
+        $Path = Resolve-Path -Path $Path
+        $PSFolder = Split-Path -Path $profile -Parent
+        $ProfilePath = Join-Path -Path $PSFolder -ChildPath "Profile.ps1"
         $PathVariable = "`$Global:OnDemandModulePath = `'$Path`'"
 
-        if (-not(Test-Path -Path $PSFolder)) {
-            try {
+        if (-not(Test-Path -Path $PSFolder))
+        {
+            try
+            {
                 New-Item -Path (Split-Path -Path $PSFolder -Parent) -Name (Split-Path -Path $PSFolder -Leaf) -ItemType Directory | Out-Null   
             }
-            catch {
+            catch
+            {
                 throw "Powershell User ($PSFolder) Folder does not exist!"
                 break
             }
         }
 
-        if(-not(Test-Path -Path $ProfilePath))
+        if (-not(Test-Path -Path $ProfilePath))
         {
-            try {
+            try
+            {
                 New-Item -Path $PSFolder -Name Profile.ps1 -ItemType File | Out-Null
             }
-            catch {
+            catch
+            {
                 throw "User Profile file ($PSFolder\Profile.ps1) does not exist!"
                 break
             }
         }
 
-        if($ProfilePath -and (Get-Content $ProfilePath | Where-Object {$_ -like '*Global:OnDemandModulePath*'})) {
+        if ($ProfilePath -and (Get-Content $ProfilePath | Where-Object { $_ -like '*Global:OnDemandModulePath*' }))
+        {
             
             $ProfileContent = Get-Content -Path $ProfilePath 
             
-            $ProfileContent | ForEach-Object { $_ -replace ".*Global:OnDemandModulePath.*",$PathVariable } | Set-Content -Path $ProfilePath -Encoding utf8
+            $ProfileContent | ForEach-Object { $_ -replace ".*Global:OnDemandModulePath.*", $PathVariable } | Set-Content -Path $ProfilePath -Encoding utf8
 
-        } else {
+        }
+        else
+        {
             $Content = @"
 `n
 ################## OnDemandModule Path ###################
@@ -172,10 +239,11 @@ $PathVariable
 
 ########### Generated by OnDemandModule module ###########
 "@
-        Add-Content -Path $ProfilePath -Value $Content
+            Add-Content -Path $ProfilePath -Value $Content
         }
 
         $Global:OnDemandModulePath = $Path
+
     }
     
     end
