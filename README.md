@@ -7,7 +7,9 @@ If you have redirected folders set up on your machine which use a network share 
 There might be a coupe of solutions for this.
 1. You can install the modules when you need it and remove when you don't (I know it doesn't sound good)
 2. You can set PSModule path to a local folder. But, it doesn't solve the problem that the modules will be imported each time
-3. You can save all your modules in a local folder and import them as you need with `Import-Module -Name "C:\LocalFolder\MySweetPSModule"`. That's what OndemandModule does but seamlessly, without typing path.
+3. You can save all your modules in a local folder and import them as you need with `Import-Module -Name "C:\LocalFolder\MySweetPSModule"`. But the problem with it is some modules have dependent module and Powershell imports them before import the module you want. If you didn't add the module path to $env:PSModule path, powershell will fail to import dependent modules.
+
+OndemandModule is written to solve those problems.
 
 
 ## Installation
