@@ -12,19 +12,26 @@ There might be a coupe of solutions for this.
 
 ## Installation
 
-You can install OnDemandModule from [Powershell Gallery](https://www.powershellgallery.com/packages/OnDemandModule/1.0.1) by running this command: 
+* You can install OnDemandModule from [Powershell Gallery](https://www.powershellgallery.com/packages/OnDemandModule/1.0.1) by running this command: 
 
-`Install-Module OnDemandModule`
+    - `Install-Module OnDemandModule` for system level installation
+        
+    - or, `Install-Module OnDemandModule -Scope CurrentUser` for user level installation.
 
-or
-
-`Install-Module OnDemandModule -Scope CurrentUser`  
-
-for user level installation
+* For the first time, create a local folder and set that folder as your OnDemandModule path by this command: `Set-OnDemandModulePath -Path "C:\Path\To\Folder"`. This command will add `OnDemandModulePath` variable to your profile with the path given. Make sure OnDemandModule is imported before you run this command.
 
 ## Usage 
 
-- For the first time, create a local folder and set that folder as your OnDemandModule path by this command: `Set-OnDemandModulePath -Path "C:\Path\To\Folder"`. This command will add `OnDemandModulePath` variable to your profile with the path given. Make sure OnDemandModule is imported before you run this command.
 - Move your PowerShell modules into the folder you set above
 - Run `Import-OnDemandModule -Name ModuleName` as needed
 - if you need to change your Module path, you can run `Set-OnDemandModulePath` cmdlet
+
+## Examples
+
+* `Get-OnDemandModule -Name AzureAD`
+* `Get-OnDemandModule -Name ImportExcel -ListAvailable | Import-OndemandModule`
+* `Import-OnDemandModule -Name VMWare.PowerCLI`
+* `Set-OnDemandModule -Path "C:\Users\Musa\OnDemandModules"`
+* `Save-Module -Name MSOnline -Path $OnDemandModulePath` 
+
+Note: The last example will install a module from PowershellGallery.com to use with OndemandModule

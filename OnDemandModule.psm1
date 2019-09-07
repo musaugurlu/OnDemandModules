@@ -19,7 +19,7 @@ function Get-OnDemandModule
         Get-OnDemandModule -Name AzureAD
 
         .EXAMPLE
-        Get-OnDemandModule -Name ImportExcel -ListAvailable
+        Get-OnDemandModule -Name ImportExcel -ListAvailable | Import-OndemandModule
 
     #>
     [CmdletBinding()]
