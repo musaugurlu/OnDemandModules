@@ -30,6 +30,8 @@ OndemandModule is written to solve those problems.
 
 ## Examples
 
+* `Get-OnDemandModule`
+* `Get-OnDemandModule -ListAvailable`
 * `Get-OnDemandModule -Name AzureAD`
 * `Get-OnDemandModule -Name ImportExcel -ListAvailable | Import-OndemandModule`
 * `Import-OnDemandModule -Name VMWare.PowerCLI`
