@@ -24,7 +24,6 @@ function Get-OnDemandModule
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory = $true)]
         [string] $Name,
         [switch] $ListAvailable
     )
@@ -37,21 +36,21 @@ function Get-OnDemandModule
     
     process
     {
-        try
-        {
-            if ($ListAvailable)
-            {
-                $Modules = Get-Module "$Name" -ListAvailable | Where-Object { $_.Path -like "$OnDemandModulePath*" }
+        # try
+        # {
+            switch ($true) {
+                ($ListAvailable -and $Name) { $Modules = Get-Module $Name -ListAvailable }
+                ($ListAvailable -and -not($Name)) { $Modules = Get-Module -ListAvailable }
+                (-not($ListAvailable) -and $Name) { $Modules = Get-Module -Name $Name }
+                (-not($ListAvailable) -and -not($Name)) { $Modules = Get-Module }
             }
-            else
-            {
-                $Modules = Get-Module "$Name" | Where-Object { $_.Path -like "$OnDemandModulePath*" }
-            }
-        }
-        catch
-        {
-            throw "$Name Module couldn't be found in OndemandModulePath $OnDemandModulePath"
-        }
+
+            $Modules = $Modules | Where-Object { $_.Path -like "$OnDemandModulePath*" }
+        # }
+        # catch
+        # {
+        #     throw "$Name Module couldn't be found in OndemandModulePath $OnDemandModulePath"
+        # }
     }
     
     end
