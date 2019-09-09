@@ -14,7 +14,7 @@ OndemandModule is written to solve those problems.
 
 ## Installation
 
-* You can install OnDemandModule from [Powershell Gallery](https://www.powershellgallery.com/packages/OnDemandModule/1.0.1) by running this command: 
+* You can install OnDemandModule from [Powershell Gallery](https://www.powershellgallery.com/packages/OnDemandModule) by running this command: 
 
     - `Install-Module OnDemandModule` for system level installation
         
